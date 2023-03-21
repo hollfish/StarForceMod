@@ -15,6 +15,7 @@ namespace StarForce
     public class EnemyGame : GameBase
     {
         private float m_ElapseSeconds = 0f;
+        public int Score { get;set; }
 
         public override GameMode GameMode
         {

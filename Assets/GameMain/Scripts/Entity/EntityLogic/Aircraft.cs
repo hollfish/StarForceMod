@@ -78,21 +78,21 @@ namespace StarForce
         {
             base.OnAttached(childEntity, parentTransform, userData);
 
-            if (childEntity is Thruster)
+            if (childEntity is Thruster thruster)
             {
-                m_Thruster = (Thruster)childEntity;
+                m_Thruster = thruster;
                 return;
             }
 
-            if (childEntity is Weapon)
+            if (childEntity is Weapon weapon)
             {
-                m_Weapons.Add((Weapon)childEntity);
+                m_Weapons.Add(weapon);
                 return;
             }
 
-            if (childEntity is Armor)
+            if (childEntity is Armor armor)
             {
-                m_Armors.Add((Armor)childEntity);
+                m_Armors.Add(armor);
                 return;
             }
         }
@@ -111,15 +111,15 @@ namespace StarForce
                 return;
             }
 
-            if (childEntity is Weapon)
+            if (childEntity is Weapon weapon)
             {
-                m_Weapons.Remove((Weapon)childEntity);
+                m_Weapons.Remove(weapon);
                 return;
             }
 
-            if (childEntity is Armor)
+            if (childEntity is Armor armor)
             {
-                m_Armors.Remove((Armor)childEntity);
+                m_Armors.Remove(armor);
                 return;
             }
         }

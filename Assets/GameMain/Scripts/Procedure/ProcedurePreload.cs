@@ -25,6 +25,7 @@ namespace StarForce
             "Entity",
             "Music",
             "Scene",
+            "Score",
             "Sound",
             "Thruster",
             "UIForm",
@@ -32,7 +33,7 @@ namespace StarForce
             "Weapon",
         };
 
-        private Dictionary<string, bool> m_LoadedFlag = new Dictionary<string, bool>();
+        private Dictionary<string, bool> m_LoadedFlag = new();
 
         public override bool UseNativeDialog
         {

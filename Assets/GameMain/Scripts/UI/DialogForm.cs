@@ -87,10 +87,7 @@ namespace StarForce
         {
             Close();
 
-            if (m_OnClickOther != null)
-            {
-                m_OnClickOther(m_UserData);
-            }
+            m_OnClickOther?.Invoke(m_UserData);
         }
 
 #if UNITY_2017_3_OR_NEWER

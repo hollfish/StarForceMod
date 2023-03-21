@@ -5,11 +5,13 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using GameFramework.DataTable;
 using System;
 using UnityEngine;
 
 namespace StarForce
-{
+{   
+
     [Serializable]
     public abstract class TargetableObjectData : EntityData
     {
@@ -19,11 +21,23 @@ namespace StarForce
         [SerializeField]
         private int m_HP = 0;
 
+
+        [SerializeField]
+        private int m_Score = 0;
+
         public TargetableObjectData(int entityId, int typeId, CampType camp)
             : base(entityId, typeId)
         {
             m_Camp = camp;
             m_HP = 0;
+
+            IDataTable<DRScore> dtScores = GameEntry.DataTable.GetDataTable<DRScore>();
+            DRScore drScore = dtScores.GetDataRow(TypeId);
+
+            if(drScore != null)
+            {
+                m_Score = drScore.Score;
+            }  
         }
 
         /// <summary>
@@ -68,6 +82,16 @@ namespace StarForce
             get
             {
                 return MaxHP > 0 ? (float)HP / MaxHP : 0f;
+            }
+        }
+
+        /// <summary>
+        /// 击杀得分
+        /// </summary>
+        public int Score
+        {
+            get {
+                return m_Score;
             }
         }
     }

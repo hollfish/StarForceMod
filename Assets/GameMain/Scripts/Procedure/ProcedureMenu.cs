@@ -17,6 +17,7 @@ namespace StarForce
     public class ProcedureMenu : ProcedureBase
     {
         private bool m_StartGame = false;
+        private bool m_EnemyMode = false;
         private MenuForm m_MenuForm = null;
 
         public override bool UseNativeDialog
@@ -30,6 +31,12 @@ namespace StarForce
         public void StartGame()
         {
             m_StartGame = true;
+        }
+
+
+        public void EnemyMode()
+        {
+            m_EnemyMode = true;
         }
 
         protected override void OnEnter(ProcedureOwner procedureOwner)
@@ -60,6 +67,13 @@ namespace StarForce
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
 
             if (m_StartGame)
+            {
+                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
+                procedureOwner.SetData<VarByte>("GameMode", (byte)0 );//Utility.Random.GetRandom(Enum.GetNames(new GameMode().GetType()).Length)
+                ChangeState<ProcedureChangeScene>(procedureOwner);
+            }
+
+            if (m_EnemyMode)
             {
                 procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
                 procedureOwner.SetData<VarByte>("GameMode", (byte)1);//Utility.Random.GetRandom(Enum.GetNames(new GameMode().GetType()).Length)

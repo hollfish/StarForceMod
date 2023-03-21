@@ -122,8 +122,7 @@ namespace UnityGameFramework.Runtime
                 return;
             }
 
-            m_UIFormLogic = GetComponent<UIFormLogic>();
-            if (m_UIFormLogic == null)
+            if (!TryGetComponent(out m_UIFormLogic))
             {
                 Log.Error("UI form '{0}' can not get UI form logic.", uiFormAssetName);
                 return;

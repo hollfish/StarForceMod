@@ -15,8 +15,7 @@ namespace StarForce
         private void OnTriggerExit(Collider other)
         {
             GameObject go = other.gameObject;
-            Entity entity = go.GetComponent<Entity>();
-            if (entity == null)
+            if (!go.TryGetComponent<Entity>(out var entity))
             {
                 Log.Warning("Unknown GameObject '{0}', you must use entity only.", go.name);
                 Destroy(go);

@@ -77,8 +77,7 @@ namespace StarForce
 
         private void OnTriggerEnter(Collider other)
         {
-            Entity entity = other.gameObject.GetComponent<Entity>();
-            if (entity == null)
+            if (!other.gameObject.TryGetComponent<Entity>(out var entity))
             {
                 return;
             }

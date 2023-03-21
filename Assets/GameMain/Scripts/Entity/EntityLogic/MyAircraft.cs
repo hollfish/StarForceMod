@@ -15,7 +15,7 @@ namespace StarForce
         [SerializeField]
         private MyAircraftData m_MyAircraftData = null;
 
-        private Rect m_PlayerMoveBoundary = default(Rect);
+        private Rect m_PlayerMoveBoundary = default;
         private Vector3 m_TargetPosition = Vector3.zero;
 
 #if UNITY_2017_3_OR_NEWER

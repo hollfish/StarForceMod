@@ -88,7 +88,7 @@ namespace StarForce
             }
 
             string assetName = AssetUtility.GetUIFormAsset(drUIForm.AssetName);
-            UIForm uiForm = null;
+            UIForm uiForm;
             if (string.IsNullOrEmpty(uiGroupName))
             {
                 uiForm = uiComponent.GetUIForm(assetName);
@@ -167,10 +167,7 @@ namespace StarForce
         private static void OpenNativeDialog(DialogParams dialogParams)
         {
             // TODO：这里应该弹出原生对话框，先简化实现为直接按确认按钮
-            if (dialogParams.OnClickConfirm != null)
-            {
-                dialogParams.OnClickConfirm(dialogParams.UserData);
-            }
+            dialogParams.OnClickConfirm?.Invoke(dialogParams.UserData);
         }
     }
 }

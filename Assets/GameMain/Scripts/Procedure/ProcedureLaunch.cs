@@ -95,31 +95,14 @@ namespace StarForce
                 // 编辑器资源模式不使用 AssetBundle，也就没有变体了
                 return;
             }
-
-            string currentVariant = null;
-            switch (GameEntry.Localization.Language)
+            string currentVariant = GameEntry.Localization.Language switch
             {
-                case Language.English:
-                    currentVariant = "en-us";
-                    break;
-
-                case Language.ChineseSimplified:
-                    currentVariant = "zh-cn";
-                    break;
-
-                case Language.ChineseTraditional:
-                    currentVariant = "zh-tw";
-                    break;
-
-                case Language.Korean:
-                    currentVariant = "ko-kr";
-                    break;
-
-                default:
-                    currentVariant = "zh-cn";
-                    break;
-            }
-
+                Language.English => "en-us",
+                Language.ChineseSimplified => "zh-cn",
+                Language.ChineseTraditional => "zh-tw",
+                Language.Korean => "ko-kr",
+                _ => "zh-cn",
+            };
             GameEntry.Resource.SetCurrentVariant(currentVariant);
             Log.Info("Init current variant complete.");
         }

@@ -22,6 +22,11 @@ namespace StarForce
             m_ProcedureMenu.StartGame();
         }
 
+        public void OnEnemyModeButtonClick()
+        {
+            m_ProcedureMenu.EnemyMode();
+        }
+
         public void OnSettingButtonClick()
         {
             GameEntry.UI.OpenUIForm(UIFormId.SettingForm);

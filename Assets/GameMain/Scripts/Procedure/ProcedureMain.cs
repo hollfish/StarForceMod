@@ -15,10 +15,11 @@ namespace StarForce
     {
         private const float GameOverDelayedSeconds = 2f;
 
-        private readonly Dictionary<GameMode, GameBase> m_Games = new Dictionary<GameMode, GameBase>();
+        private readonly Dictionary<GameMode, GameBase> m_Games = new();
         private GameBase m_CurrentGame = null;
         private bool m_GotoMenu = false;
         private float m_GotoMenuDelaySeconds = 0f;
+        private ScoreItem m_ScoreItem=null;
 
         public override bool UseNativeDialog
         {
@@ -56,6 +57,7 @@ namespace StarForce
             GameMode gameMode = (GameMode)procedureOwner.GetData<VarByte>("GameMode").Value;
             m_CurrentGame = m_Games[gameMode];
             m_CurrentGame.Initialize();
+            GameEntry.UI.OpenUIForm(UIFormId.ScoreItem, this);
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
@@ -67,6 +69,12 @@ namespace StarForce
             }
 
             base.OnLeave(procedureOwner, isShutdown);
+
+            if (m_ScoreItem != null)
+            {
+                m_ScoreItem.Close(isShutdown);
+                m_ScoreItem = null;
+            }
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
@@ -91,6 +99,8 @@ namespace StarForce
                 procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Menu"));
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
+
+
         }
     }
 }

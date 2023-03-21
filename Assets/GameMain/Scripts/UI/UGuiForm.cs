@@ -21,7 +21,7 @@ namespace StarForce
         private static Font s_MainFont = null;
         private Canvas m_CachedCanvas = null;
         private CanvasGroup m_CanvasGroup = null;
-        private List<Canvas> m_CachedCanvasContainer = new List<Canvas>();
+        private List<Canvas> m_CachedCanvasContainer = new();
 
         public int OriginalDepth
         {

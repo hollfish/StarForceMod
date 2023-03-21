@@ -5,6 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using System;
 using UnityEngine;
 using UnityGameFramework.Runtime;
 
@@ -15,7 +16,8 @@ namespace StarForce
         [SerializeField]
         private EnemyAircraftData m_EnemyAircraftData = null;
 
-
+        private EnemyGame m_EnemyGame = null;
+        private int i = 0;
 #if UNITY_2017_3_OR_NEWER
         protected override void OnInit(object userData)
 #else
@@ -50,11 +52,6 @@ namespace StarForce
         {
             base.OnUpdate(elapseSeconds, realElapseSeconds);
 
-            if(elapseSeconds == 1f)
-            {
-                Log.Error("gogogo");
-            }
-
             for (int i = 0; i < m_Weapons.Count; i++)
             {
                 m_Weapons[i].EnemyAttack();
@@ -62,6 +59,18 @@ namespace StarForce
 
             CachedTransform.Translate(Vector3.back * m_EnemyAircraftData.Speed * elapseSeconds, Space.World);
         
+        }
+#if UNITY_2017_3_OR_NEWER
+        protected override void OnDead(Entity attacker)
+#else
+        protected internal override void OnDead(Entity attacker)
+#endif
+        {
+            base.OnDead(attacker);
+            
+            
+            i += m_EnemyAircraftData.Score;
+            m_EnemyGame.Score = i;
         }
     }
 }

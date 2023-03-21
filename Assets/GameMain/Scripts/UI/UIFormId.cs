@@ -33,5 +33,10 @@ namespace StarForce
         /// 关于。
         /// </summary>
         AboutForm = 102,
+
+        /// <summary>
+        /// 得分。
+        /// </summary>
+        ScoreItem = 103,
     }
 }

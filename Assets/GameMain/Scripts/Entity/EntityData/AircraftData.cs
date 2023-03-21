@@ -36,6 +36,7 @@ namespace StarForce
         [SerializeField]
         private int m_DeadSoundId = 0;
 
+
         public AircraftData(int entityId, int typeId, CampType camp)
             : base(entityId, typeId, camp)
         {
@@ -62,6 +63,8 @@ namespace StarForce
             m_DeadSoundId = drAircraft.DeadSoundId;
 
             HP = m_MaxHP;
+
+
         }
 
         /// <summary>
