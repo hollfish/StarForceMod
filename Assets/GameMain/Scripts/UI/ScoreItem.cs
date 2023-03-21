@@ -6,7 +6,10 @@
 //------------------------------------------------------------
 
 using GameFramework;
+using GameFramework.Event;
+using System;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
@@ -15,18 +18,26 @@ namespace StarForce
     public class ScoreItem : UGuiForm
     {
         [SerializeField]
-        private Text scoreText;
+        private Text m_ScoreText = null;
 
-        private EnemyGame m_EnemyGame = null;
- 
+        private int Score;
+        private ProcedureMain m_ProcedureMain;
+
 #if UNITY_2017_3_OR_NEWER
-        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected override void OnOpen(object userData)
 #else
-        protected internal override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        protected internal override void OnOpen(object userData)
 #endif
         {
-            base.OnUpdate(elapseSeconds, realElapseSeconds);
-            scoreText.text = m_EnemyGame.Score.ToString();
+            base.OnOpen(userData);
+            m_ProcedureMain = (ProcedureMain)userData;
+            if (m_ProcedureMain == null)
+            {
+                Log.Warning("GameBase is invalid when open MenuForm.");
+                return;
+            }
+            m_ScoreText.text = "score:0";
+            GameEntry.Event.Subscribe(DefeatedEnemyEventArgs.EventId, OnEnemyDefeated);
         }
 
 #if UNITY_2017_3_OR_NEWER
@@ -36,6 +47,15 @@ namespace StarForce
 #endif
         {
             base.OnClose(isShutdown, userData);
+            GameEntry.Event.Unsubscribe(DefeatedEnemyEventArgs.EventId, OnEnemyDefeated);
+        }
+
+
+        private void OnEnemyDefeated(object sender, GameEventArgs e)
+        {
+            DefeatedEnemyEventArgs ne = (DefeatedEnemyEventArgs)e;
+            Score += ne.Score;
+            m_ScoreText.text = string.Format("score:{0}", Score);
         }
     }
 }

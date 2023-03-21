@@ -15,9 +15,8 @@ namespace StarForce
     {
         [SerializeField]
         private EnemyAircraftData m_EnemyAircraftData = null;
-
-        private EnemyGame m_EnemyGame = null;
-        private int i = 0;
+        private EventComponent m_EventComponent = null;
+        private int Score { get; set; }
 #if UNITY_2017_3_OR_NEWER
         protected override void OnInit(object userData)
 #else
@@ -41,7 +40,7 @@ namespace StarForce
                 Log.Error("Enemy aircraft data is invalid.");
                 return;
             }
-           
+            Score = m_EnemyAircraftData.Score;
         }
 
 #if UNITY_2017_3_OR_NEWER
@@ -67,10 +66,9 @@ namespace StarForce
 #endif
         {
             base.OnDead(attacker);
-            
-            
-            i += m_EnemyAircraftData.Score;
-            m_EnemyGame.Score = i;
+            DefeatedEnemyEventArgs e =  DefeatedEnemyEventArgs.Create(Score);
+            m_EventComponent = GameEntry.Event.GetComponent<EventComponent>();
+            m_EventComponent.FireNow(this,e);
         }
     }
 }

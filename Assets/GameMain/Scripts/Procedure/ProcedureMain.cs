@@ -5,6 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
+using GameFramework.Event;
 using System.Collections.Generic;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
@@ -19,7 +20,7 @@ namespace StarForce
         private GameBase m_CurrentGame = null;
         private bool m_GotoMenu = false;
         private float m_GotoMenuDelaySeconds = 0f;
-        private ScoreItem m_ScoreItem=null;
+        private ScoreItem m_ScoreItem = null;
 
         public override bool UseNativeDialog
         {
@@ -100,7 +101,7 @@ namespace StarForce
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
 
-
         }
+
     }
 }
