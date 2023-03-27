@@ -7,6 +7,7 @@
 
 using GameFramework.Event;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityGameFramework.Runtime;
 
 namespace StarForce
@@ -30,12 +31,17 @@ namespace StarForce
             protected set;
         }
 
-        private MyAircraft m_MyAircraft = null;
+        public int Score { get; set; }
+        public int GameLevel { get; set; }
 
+        public bool MissionComplete { get;set; }
+        private MyAircraft m_MyAircraft = null; 
+        private EventComponent m_EventComponent = null;
         public virtual void Initialize()
         {
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Subscribe(ShowEntityFailureEventArgs.EventId, OnShowEntityFailure);
+            GameEntry.Event.Subscribe(DefeatedEnemyEventArgs.EventId, OnEnemyDefeated);
 
             SceneBackground = Object.FindObjectOfType<ScrollableBackground>();
             if (SceneBackground == null)
@@ -50,8 +56,9 @@ namespace StarForce
                 Name = "My Aircraft",
                 Position = Vector3.zero,
             });
-
             GameOver = false;
+            MissionComplete = false;
+            Score = 0;
             m_MyAircraft = null;
         }
 
@@ -59,6 +66,7 @@ namespace StarForce
         {
             GameEntry.Event.Unsubscribe(ShowEntitySuccessEventArgs.EventId, OnShowEntitySuccess);
             GameEntry.Event.Unsubscribe(ShowEntityFailureEventArgs.EventId, OnShowEntityFailure);
+            GameEntry.Event.Unsubscribe(DefeatedEnemyEventArgs.EventId, OnEnemyDefeated);
         }
 
         public virtual void Update(float elapseSeconds, float realElapseSeconds)
@@ -66,6 +74,14 @@ namespace StarForce
             if (m_MyAircraft != null && m_MyAircraft.IsDead)
             {
                 GameOver = true;
+                return;
+            }
+            if (Score >= 100)
+            {
+                MissionComplete = true;
+                MissionCompleteEventArgs e = MissionCompleteEventArgs.Create();
+                m_EventComponent = GameEntry.Event.GetComponent<EventComponent>();
+                m_EventComponent.FireNow(this, e);
                 return;
             }
         }
@@ -79,10 +95,18 @@ namespace StarForce
             }
         }
 
+
         protected virtual void OnShowEntityFailure(object sender, GameEventArgs e)
         {
             ShowEntityFailureEventArgs ne = (ShowEntityFailureEventArgs)e;
             Log.Warning("Show entity failure with error message '{0}'.", ne.ErrorMessage);
+        }
+
+        private void OnEnemyDefeated(object sender, GameEventArgs e)
+        {
+            DefeatedEnemyEventArgs ne = (DefeatedEnemyEventArgs)e;
+            Score += ne.Score;
+            
         }
     }
 }

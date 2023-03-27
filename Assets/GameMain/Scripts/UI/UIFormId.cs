@@ -38,5 +38,9 @@ namespace StarForce
         /// 得分。
         /// </summary>
         ScoreItem = 103,
+        /// <summary>
+        /// 通关。
+        /// </summary>
+        MissionCompleteItem = 104,
     }
 }

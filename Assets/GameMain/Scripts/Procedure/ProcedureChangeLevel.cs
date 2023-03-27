@@ -5,21 +5,18 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 
-using GameFramework;
+using GameFramework.DataTable;
 using GameFramework.Event;
 using System;
-using UnityEngine.UIElements;
+using System.Collections.Generic;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<GameFramework.Procedure.IProcedureManager>;
 
 namespace StarForce
 {
-    public class ProcedureMenu : ProcedureBase
+    public class ProcedureChangeLevel : ProcedureBase
     {
-        private bool m_StartGame = false;
-        private bool m_EnemyMode = false;
-        private MenuForm m_MenuForm = null;
-
+        private MissionCompleteItem missionCompleteItem = null;
         public override bool UseNativeDialog
         {
             get
@@ -27,16 +24,10 @@ namespace StarForce
                 return false;
             }
         }
-
-        public void StartGame()
+        private bool m_Complete = false;
+        public void SetComplete()
         {
-            m_StartGame = true;
-        }
-
-
-        public void EnemyMode()
-        {
-            m_EnemyMode = true;
+            m_Complete = true;
         }
 
         protected override void OnEnter(ProcedureOwner procedureOwner)
@@ -44,44 +35,38 @@ namespace StarForce
             base.OnEnter(procedureOwner);
 
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+            // 隐藏所有实体
+            GameEntry.Entity.HideAllLoadingEntities();
+            GameEntry.Entity.HideAllLoadedEntities();
 
-            m_StartGame = false;
-            m_EnemyMode = false;
-            GameEntry.UI.OpenUIForm(UIFormId.MenuForm, this);
+            GameEntry.UI.OpenUIForm(UIFormId.MissionCompleteItem, this);
+
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
-            base.OnLeave(procedureOwner, isShutdown);
-
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
-
-            if (m_MenuForm != null)
+            if (missionCompleteItem != null)
             {
-                m_MenuForm.Close(isShutdown);
-                m_MenuForm = null;
+                missionCompleteItem.Close(isShutdown);
+                missionCompleteItem = null;
             }
+
+            m_Complete = false;
+            base.OnLeave(procedureOwner, isShutdown);
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-
-            if (m_StartGame)
-            {
-                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
-                procedureOwner.SetData<VarByte>("GameMode", (byte)0 );
-                ChangeState<ProcedureChangeScene>(procedureOwner);
-            }
-
-            if (m_EnemyMode)
-            {
-                procedureOwner.SetData<VarInt32>("NextSceneId", GameEntry.Config.GetInt("Scene.Main"));
-                procedureOwner.SetData<VarByte>("GameMode", (byte)1);
-                procedureOwner.SetData<VarInt32>("GameLevel", 1);
-                ChangeState<ProcedureChangeScene>(procedureOwner);
+      
+            if (m_Complete)
+            {                
+                ChangeState<ProcedureMain>(procedureOwner);
+                return;
             }
         }
+
 
         private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
         {
@@ -91,7 +76,7 @@ namespace StarForce
                 return;
             }
 
-            m_MenuForm = (MenuForm)ne.UIForm.Logic;
+            missionCompleteItem = (MissionCompleteItem)ne.UIForm.Logic;
         }
     }
 }

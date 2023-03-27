@@ -21,7 +21,6 @@ namespace StarForce
         private Text m_ScoreText = null;
 
         private int Score;
-        private ProcedureMain m_ProcedureMain;
 
 #if UNITY_2017_3_OR_NEWER
         protected override void OnOpen(object userData)
@@ -30,14 +29,9 @@ namespace StarForce
 #endif
         {
             base.OnOpen(userData);
-            m_ProcedureMain = (ProcedureMain)userData;
-            if (m_ProcedureMain == null)
-            {
-                Log.Warning("GameBase is invalid when open MenuForm.");
-                return;
-            }
-            m_ScoreText.text = "score:0";
             GameEntry.Event.Subscribe(DefeatedEnemyEventArgs.EventId, OnEnemyDefeated);
+            GameEntry.Event.Subscribe(MissionCompleteEventArgs.EventId, OnMissionComplete);
+            m_ScoreText.text = "score:0";
         }
 
 #if UNITY_2017_3_OR_NEWER
@@ -47,15 +41,22 @@ namespace StarForce
 #endif
         {
             base.OnClose(isShutdown, userData);
+            Score = 0;
             GameEntry.Event.Unsubscribe(DefeatedEnemyEventArgs.EventId, OnEnemyDefeated);
+            GameEntry.Event.Unsubscribe(MissionCompleteEventArgs.EventId, OnMissionComplete);
         }
-
 
         private void OnEnemyDefeated(object sender, GameEventArgs e)
         {
             DefeatedEnemyEventArgs ne = (DefeatedEnemyEventArgs)e;
             Score += ne.Score;
             m_ScoreText.text = string.Format("score:{0}", Score);
+        }
+
+        private void OnMissionComplete(object sender, GameEventArgs e)
+        {
+            m_ScoreText.text = "score:0";
+            Score = 0;
         }
     }
 }

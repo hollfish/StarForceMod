@@ -21,6 +21,7 @@ namespace StarForce
         private bool m_GotoMenu = false;
         private float m_GotoMenuDelaySeconds = 0f;
         private ScoreItem m_ScoreItem = null;
+        private int GameLevel = 0;
 
         public override bool UseNativeDialog
         {
@@ -41,6 +42,7 @@ namespace StarForce
 
             m_Games.Add(GameMode.Survival, new SurvivalGame());
             m_Games.Add(GameMode.Enemy,new EnemyGame());
+            
         }
 
         protected override void OnDestroy(ProcedureOwner procedureOwner)
@@ -53,38 +55,56 @@ namespace StarForce
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
-
+            GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
             m_GotoMenu = false;
             GameMode gameMode = (GameMode)procedureOwner.GetData<VarByte>("GameMode").Value;
             m_CurrentGame = m_Games[gameMode];
             m_CurrentGame.Initialize();
+            if (gameMode != GameMode.Survival)
+            {
+                GameLevel = procedureOwner.GetData<VarInt32>("GameLevel").Value;
+                m_CurrentGame.GameLevel = GameLevel;           
+            }
             GameEntry.UI.OpenUIForm(UIFormId.ScoreItem, this);
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
+
+            base.OnLeave(procedureOwner, isShutdown);
             if (m_CurrentGame != null)
             {
                 m_CurrentGame.Shutdown();
                 m_CurrentGame = null;
             }
-
-            base.OnLeave(procedureOwner, isShutdown);
-
+            
             if (m_ScoreItem != null)
             {
                 m_ScoreItem.Close(isShutdown);
                 m_ScoreItem = null;
             }
+            GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+
+            
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
 
-            if (m_CurrentGame != null && !m_CurrentGame.GameOver)
+            if (m_CurrentGame != null && !m_CurrentGame.GameOver && !m_CurrentGame.MissionComplete)
             {
                 m_CurrentGame.Update(elapseSeconds, realElapseSeconds);
+                
+                return;
+            }
+
+            if (m_CurrentGame.MissionComplete)
+            {
+                m_CurrentGame.MissionComplete = false;
+                procedureOwner.SetData<VarInt32>("GameLevel", GameLevel + 1);
+
+                ChangeState<ProcedureChangeLevel>(procedureOwner);
                 return;
             }
 
@@ -101,6 +121,16 @@ namespace StarForce
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
 
+        }
+        private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
+        {
+            OpenUIFormSuccessEventArgs ne = (OpenUIFormSuccessEventArgs)e;
+            if (ne.UserData != this)
+            {
+                return;
+            }
+
+            m_ScoreItem = (ScoreItem)ne.UIForm.Logic;
         }
 
     }
