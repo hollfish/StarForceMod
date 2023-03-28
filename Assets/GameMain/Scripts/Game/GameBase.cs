@@ -81,7 +81,7 @@ namespace StarForce
                 MissionComplete = true;
                 MissionCompleteEventArgs e = MissionCompleteEventArgs.Create();
                 m_EventComponent = GameEntry.Event.GetComponent<EventComponent>();
-                m_EventComponent.FireNow(this, e);
+                m_EventComponent.Fire(this, e);
                 return;
             }
         }

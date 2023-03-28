@@ -56,6 +56,7 @@ namespace StarForce
         {
             base.OnEnter(procedureOwner);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+            GameEntry.Event.Subscribe(CloseUIFormCompleteEventArgs.EventId, OnCloseUIFormComplete);
             m_GotoMenu = false;
             GameMode gameMode = (GameMode)procedureOwner.GetData<VarByte>("GameMode").Value;
             m_CurrentGame = m_Games[gameMode];
@@ -65,7 +66,7 @@ namespace StarForce
                 GameLevel = procedureOwner.GetData<VarInt32>("GameLevel").Value;
                 m_CurrentGame.GameLevel = GameLevel;           
             }
-            GameEntry.UI.OpenUIForm(UIFormId.ScoreItem, this);
+            
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
@@ -84,8 +85,9 @@ namespace StarForce
                 m_ScoreItem = null;
             }
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+            GameEntry.Event.Unsubscribe(CloseUIFormCompleteEventArgs.EventId, OnCloseUIFormComplete);
 
-            
+
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
@@ -105,7 +107,6 @@ namespace StarForce
                 procedureOwner.SetData<VarInt32>("GameLevel", GameLevel + 1);
 
                 ChangeState<ProcedureChangeLevel>(procedureOwner);
-                return;
             }
 
             if (!m_GotoMenu)
@@ -131,6 +132,11 @@ namespace StarForce
             }
 
             m_ScoreItem = (ScoreItem)ne.UIForm.Logic;
+        }
+
+        private void OnCloseUIFormComplete(object sender, GameEventArgs e)
+        {
+            GameEntry.UI.OpenUIForm(UIFormId.ScoreItem, this);
         }
 
     }

@@ -35,17 +35,17 @@ namespace StarForce
             base.OnEnter(procedureOwner);
 
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+            GameEntry.Event.Subscribe(CloseUIFormCompleteEventArgs.EventId, OnCloseUIFormComplete);
             // 隐藏所有实体
             GameEntry.Entity.HideAllLoadingEntities();
-            GameEntry.Entity.HideAllLoadedEntities();
-
-            GameEntry.UI.OpenUIForm(UIFormId.MissionCompleteItem, this);
+            GameEntry.Entity.HideAllLoadedEntities();         
 
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+            GameEntry.Event.Unsubscribe(CloseUIFormCompleteEventArgs.EventId, OnCloseUIFormComplete);
             if (missionCompleteItem != null)
             {
                 missionCompleteItem.Close(isShutdown);
@@ -77,6 +77,10 @@ namespace StarForce
             }
 
             missionCompleteItem = (MissionCompleteItem)ne.UIForm.Logic;
+        }
+        private void OnCloseUIFormComplete(object sender, GameEventArgs e)
+        {
+            GameEntry.UI.OpenUIForm(UIFormId.MissionCompleteItem, this);
         }
     }
 }

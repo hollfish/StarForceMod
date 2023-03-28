@@ -68,7 +68,7 @@ namespace StarForce
             base.OnDead(attacker);
             DefeatedEnemyEventArgs e =  DefeatedEnemyEventArgs.Create(Score);
             m_EventComponent = GameEntry.Event.GetComponent<EventComponent>();
-            m_EventComponent.FireNow(this,e);
+            m_EventComponent.Fire(this,e);
         }
     }
 }
